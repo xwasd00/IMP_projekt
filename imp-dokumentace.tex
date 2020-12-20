@@ -1,0 +1,56 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[unicode]{hyperref}
+\usepackage[czech]{babel}
+\usepackage{graphicx}
+\usepackage[unicode]{hyperref}
+\begin{document}
+\begin{titlepage}
+\begin{center}
+\textsc{\Huge
+Vysoké učení technické v~Brně\\[0.3em]
+\huge Fakulta informačních technologií}\\
+\vspace{\stretch{0.382}}
+{\LARGE Mikroprocesorové a vestavěné systémy\\[0.3em]
+\Huge Demonstrace využití USB rozhraní - simulace počítařové myši}\\
+\vspace{\stretch{0.618}}
+\end{center}
+{\Large \today \hfill Michal Sova (xsovam00)}
+\end{titlepage}
+
+\section{Úvod}
+Zadáním projektu bylo vytvoření jednoduché demonstrační aplikace pro ARM na FITkitu, která vhodným způsobem ilustruje možnosti využití rozhraní USB.
+Na základě tohoto zadání bylo vytvořena aplikace simulující pohyb počítačové myši s využitím API pro komunikaci přes USB\cite{USB}, pomocí tlačítek FITkitu.
+
+
+\section{Návod na zprovoznění}
+K nahrání aplikace na zařízení FITkit3 je zapotřebí software 
+\textit{Kinetis Design Studio} a Distribuce operačního systému MQX RTOS s ovladačem USB periferie, který je dostupný z: 
+\url{http://www.fit.vutbr.cz/~simekv/MQX_4_2_FITKIT%20(for%20KDS%20v3.0.0)%20-%20sources.zip}. 
+Po rozbalení archivu je potřeba zkopírovat zdrojové soubory mouse.c a usb\_descriptor.c do složky 
+\path{MQX_4_2_FITKIT (for KDS v3.0.0) - sources\Freescale_MQX_4_2_FITKIT_KDS300\usb\device\examples\hid\mouse}
+a původní soubory nahraďte. Poté do Kinetisu importujte projekt pomocí File$\rightarrow$Project, zde vyberte Project of Projects$\rightarrow$Existing Projects Sets$\rightarrow$Next. Import from file:\path{MQX_4_2_FITKIT (for KDS v3.0.0) - sources\Freescale_MQX_4_2_FITKIT_KDS300\usb\device\examples\hid\mouse\build\kds\hid_mouse_dev_fitkit\hid_mouse_dev_fitkit.wsd} $\rightarrow$ Finish. Dále je potřeba sestavit projekt (pomocí Project$\rightarrow$Build All). Poté je třeba nastavit debugger a nahrát aplikaci na FITkit3.
+\section{Ovládání}
+Myš se ovládá pomocí tlačítek na FITkitu připojeného k počítači. Počítač rozpozná zařízení jako periferní zařízení, konkrétně myš. Myš se ovládá pomocí tlačítek, označených na FITkitu SW2-SW5. Tlačítkem, označeným SW6 se je zajištěno kliknutí.
+
+Příklad použití je dostupný zde: \url{https://nextcloud.fit.vutbr.cz/s/D5P4diTjyTmSdgm}
+
+\section{Implementace}
+K implementaci bylo využito schéma zapojení přístroje \cite{FITkit}, referenčního manuálu\cite{USB} a demo aplikací \cite{demo}.
+
+Zdrojový kód je umístěn ve dvou souborech mouse.c a usb\_descriptor.c. V souboru usb\_descriptor.c je popis zařízení. V souboru mouse.c se nachází následující funkce: Main\_Task, která je volána jako první. Main\_Task následně volá funkci TedtApp\_Init, ve které se inicializuje rozhraní USB (pomocí USB\_Class\_HID\_Init) a tlačítka FITkitu. Funkce InitializeIO inicializuje jednotlivá tlačítka pomocí funkcí lwgpio\_init, lwgpio\_set\_functionality a lwgpio\_set\_attribute. Funkce USB\_App\_Callback zpracovává události a v případě dokončení inicializace spouští funkci move\_mouse. Funkce move\_mouse zajišťuje pohyb myši. V případě stisku či podržení tlačítka je vykonán pohyb myši daným směrem, v případě zmáčknutí tlačítka, označeného SW6 je vykonáno kliknutí myši.
+
+
+\section{Závěr}
+Aplikace demostruje připojení FITkitu pomocí rozhraní USB jako počítačová myš. Řešení je v zásadě funkční, myš je však omezena na pohyby nahoru, dolů, doleva a doprava, nelze se s ní pohybovat šikmo. 
+
+\newpage
+\begin{thebibliography}{99}
+\bibitem{USB} Freescale MQX™ USB Device API – Reference Manual. [online] Dostupné z:\url{https://www.nxp.com.cn/docs/en/reference-manual/MQX\_USB\_Device\_Reference\_Manual.pdf}
+\bibitem{FITkit} Schéma zapojení \url{http://www.fit.vutbr.cz/~simekv/schematics%20-%20FITkit%20v3.0.pdf}
+\bibitem{demo} Distribuce operačního systému MQX RTOS s ovladačem USB periferie \url{http://www.fit.vutbr.cz/~simekv/MQX_4_2_FITKIT%20(for%20KDS%20v3.0.0)%20-%20sources.zip}
+\end{thebibliography}
+
+
+
+\end{document}
