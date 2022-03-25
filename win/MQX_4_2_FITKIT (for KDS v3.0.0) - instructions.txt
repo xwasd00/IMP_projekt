@@ -1,0 +1,24 @@
+Strucne instrukce pro otestovani funkcnosti v KDS 2.0.0 / 3.0.0:
+---------------------------------------------------------------- 
+Importujte workspace ( File->Import->Project of Projects->Existing Project Sets->Next->
+
+Import from file:
+Freescale_MQX_4_2_FITKIT\demo\web_hvac\build\kds\web_hvac_fitkit\web_h
+vac_fitkit.wsd -> Finish
+
+Vyskoci IAR Embedded Workbench Setup
+Ignorujte, -> Cancel
+Project -> Build All
+
+Nahrani do desky:
+Sipka vedle broucka -> Debug
+Configurations ->
+
+-> Prave tlacitko: GDB PEmicro Interface Debugging -> New->
+->Zalozka: Debugger -> Device name -> K60DN512
+-> Debug
+
+IP adresa web serveru je 192.168.1.202 Shell je k dispozici na seriove lince.
+
+Mozna bude potreba udelat jeste tohle:
+- manuálnì vnutit web_hvac_fitkit do pole Project: v Debug Configurations aby šlo daný ELF (C/C++ Application:) int flash debug\web_hvac.elf nahrát do MCU
